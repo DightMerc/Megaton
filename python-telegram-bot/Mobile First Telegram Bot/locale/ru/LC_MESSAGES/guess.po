@@ -1,0 +1,80 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2018-02-26 15:21+0400\n"
+"PO-Revision-Date: 2018-02-26 15:22+0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 2.0.6\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: bot.py:43 bot.py:88
+msgid "Добро пожаловать, "
+msgstr ""
+
+#: bot.py:43 bot.py:88
+msgid "! Вас приветсвует Бот компании Mobile First"
+msgstr ""
+
+#: bot.py:47
+msgid "Пожалуйста, выберите язык для дальнейшего взаимодействия"
+msgstr ""
+
+#: bot.py:55
+msgid "Разработка"
+msgstr ""
+
+#: bot.py:55
+msgid "Дизайн"
+msgstr ""
+
+#: bot.py:55
+msgid "Маркетинг"
+msgstr ""
+
+#: bot.py:55
+msgid "IT-Consulting"
+msgstr ""
+
+#: bot.py:60
+msgid "Выберите категорию"
+msgstr ""
+
+#: bot.py:162
+msgid "Русский язык"
+msgstr ""
+
+#: bot.py:162
+msgid "O`zbek tili"
+msgstr ""
+
+#~ msgid "Hello! What is your name?"
+#~ msgstr "Привет! Как тебя зовут?"
+
+#~ msgid "Well, %s, I am thinking of a number between 1 and 20."
+#~ msgstr "Хорошо, %s, я загадал число между 1 и 20."
+
+#~ msgid "Take a guess."
+#~ msgstr "Поздравляю."
+
+#~ msgid "Your guess is too low."
+#~ msgstr "Слишком маленькое."
+
+#~ msgid "Your guess is too high."
+#~ msgstr "Слишком большое."
+
+#~ msgid "Good job, %s! You guessed my number in %s guesses!"
+#~ msgstr "Хорошая работа, %s! Ты отгадал мое число за %s попыток!"
+
+#~ msgid "Nope. The number I was thinking of was %s."
+#~ msgstr "Нет. Я загадал число %s."
