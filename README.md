@@ -1,1 +1,1 @@
-TRAINING
+train
