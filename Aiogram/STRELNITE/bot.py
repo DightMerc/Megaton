@@ -1,7 +1,9 @@
 import asyncio
 import logging
 
-from aiogram import Bot, types, Dispatcher, executor
+from aiogram import Bot, types, Dispatcher
+from aiogram.utils import executor
+
 
 API_TOKEN = '679147382:AAGRMZ1t2wrGuYBQOMg-jhNiWnWNUUOkDUM'
 
