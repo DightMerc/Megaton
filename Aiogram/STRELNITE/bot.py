@@ -16,7 +16,7 @@ dp = Dispatcher(bot)
 
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
-    await message.reply("Hi!\nI'm EchoBot!\nPowered by aiogram.")
+    await message.reply("What cam you say About PyCharm???")
 
 
 @dp.message_handler(regexp='(^cat[s]?$|puss)')
@@ -33,3 +33,5 @@ async def echo(message: types.Message):
 
 if __name__ == '__main__':
     executor.start_polling(dp, loop=loop, skip_updates=True)
+
+    ##Can you hear me?
