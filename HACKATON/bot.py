@@ -41,8 +41,14 @@ def start(bot, update):
 
 		text = "Выберите действие"
 
-		reply_keyboard = [['Бронирование'],['Мои машины']]
-		markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+		if os.path.exists(os.getcwd()+"\\Users\\"+str(user)+"\\reserved"):
+			reply_keyboard = [['Мои места'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+		else:
+			reply_keyboard = [['Бронирование'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
 
 		
 		bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
@@ -113,6 +119,24 @@ def CreateStableKeyboard(data):
 
 
 	return keyboard
+
+def CreateInlineKeyboardCars(data):
+
+
+	keyboard = []
+	keyboard_buttons = []
+
+	print(data)
+	for a in data:
+
+		my_keyboard_button = InlineKeyboardButton(text=str(a).replace("\n",""), callback_data="delete " + str(a).replace("\n",""))
+		keyboard_buttons.append(my_keyboard_button)
+
+		keyboard.append(keyboard_buttons)
+		keyboard_buttons = []
+
+
+	return InlineKeyboardMarkup(keyboard)
 
 
 def CreateInlineKeyboard(data, place):
@@ -185,6 +209,62 @@ def InlineHandler(bot, update):
 	user = update.callback_query.message.chat.id
 	received_text = update.callback_query.data
 
+
+	if "delete " in received_text:
+		received_text = received_text.replace("delete ","")
+		print(received_text)
+
+		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\description","r",encoding="utf8")
+		description = file.read()
+		file.close()
+
+		description = description.replace(received_text+"\n","")
+
+		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\description","w",encoding="utf8")
+		file.write(description)
+		file.close()
+
+		data = description.split()
+
+
+		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\cars","r", encoding="utf8")
+		cars = file.readlines()
+		file.close()
+
+		try:
+			file = open(os.getcwd()+"\\Users\\"+str(user)+"\\cars","w", encoding="utf8")
+			for a in cars:
+				if not data[1] in str(a).replace("\n",""):
+					file.write(str(a).replace("\n","")+"\n")
+			file.close()
+		except Exception as e:
+			pass
+		
+		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\description", "r", encoding="utf8")
+		Cars = file.readlines()
+		file.close()
+
+		if len(Cars)!=0:
+			bot.editMessageReplyMarkup(user, update.callback_query.message.message_id, reply_markup=CreateInlineKeyboardCars(Cars))
+
+			return NONE
+		else:
+			bot.deleteMessage(user, update.callback_query.message.message_id)
+			text = "<b>Вами не добавлена ни одна машина</b>"
+
+			reply_keyboard = [['Добавить'],["Назад"]]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+			bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
+
+			return NONE
+			
+
+
+		return NONE
+
+
+
 	if "floor" in received_text:
 		received_text = received_text.replace("floor ","")
 		data = received_text.split()
@@ -210,7 +290,11 @@ def InlineHandler(bot, update):
 
 		bot.deleteMessage(user, update.callback_query.message.message_id)
 
+
 		bot.sendMessage(user, text, reply_markup=CreateInlineKeyboard(free_places, place), parse_mode=telegram.ParseMode.HTML)
+
+		return NONE
+
 
 	else:
 		data = received_text.split()
@@ -239,6 +323,28 @@ def InlineHandler(bot, update):
 				a+=1
 
 		bot.sendMessage(user, "Вы зарезервировали <b>"+number_place+"</b> место на "+str(floor)+" этаже", parse_mode=telegram.ParseMode.HTML)
+
+		file = open(os.getcwd()+"\\Places\\"+str(place)+"\\Reserved\\"+number_place+"\\reserved","w")
+		file.write(str(user))
+		file.close()
+
+		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\reserved","w")
+		file.write(str(place)+"\n"+str(floor)+"\n"+str(number_place))
+		file.close()
+
+		text = "Выберите действие"
+
+		if os.path.exists(os.getcwd()+"\\Users\\"+str(user)+"\\reserved"):
+			reply_keyboard = [['Мои места'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+		else:
+			reply_keyboard = [['Бронирование'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+
+		
+		bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
 
 		return NONE
 
@@ -282,6 +388,7 @@ def text_handler(bot, update):
 
 
 	if os.path.exists(os.getcwd()+"\\Users\\"+str(user)+"\\add_car_number"):
+
 		os.remove(os.getcwd()+"\\Users\\"+str(user)+"\\add_car_number")
 
 		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\cars","a",encoding="utf8")
@@ -297,6 +404,8 @@ def text_handler(bot, update):
 		markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
 
 		bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
+
+
 
 		return NONE
 
@@ -318,8 +427,14 @@ def text_handler(bot, update):
 
 			text = "Выберите действие"
 
-			reply_keyboard = [['Бронирование'],['Мои машины']]
-			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+			if os.path.exists(os.getcwd()+"\\Users\\"+str(user)+"\\reserved"):
+				reply_keyboard = [['Мои места'],['Мои машины']]
+				markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+			else:
+				reply_keyboard = [['Бронирование'],['Мои машины']]
+				markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
 
 			
 			bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
@@ -343,15 +458,128 @@ def text_handler(bot, update):
 		bot.sendMessage(user, text, parse_mode=telegram.ParseMode.HTML)
 
 		text = "Выберите действие"
+		if os.path.exists(os.getcwd()+"\\Users\\"+str(user)+"\\reserved"):
+			reply_keyboard = [['Мои места'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
 
-		reply_keyboard = [['Бронирование'],['Мои машины']]
-		markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+		else:
+			reply_keyboard = [['Бронирование'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
 
 		
 		bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
 
 
 		return NONE
+
+	if "Мои места" in received_text:
+		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\reserved","r")
+		data = file.readlines()
+		file.close()
+
+		text = "<b>Моё место</b>\n\n<b>"+data[0].replace("\n","") +"</b>: "+ data[1].replace("\n","") +" этаж, " + data[2].replace("\n","") +" место"
+
+		reply_keyboard = [['Я приехал!','Отменить'],['Назад']]
+		markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+		
+		bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
+
+		return NONE
+
+	if "Я приехал!" in received_text:
+		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\reserved","r")
+		data = file.readlines()
+		file.close()
+
+		place = data[0].replace("\n","")
+		floor = data[1].replace("\n","")
+		number_place = data[2].replace("\n","")
+
+		file = open(os.getcwd()+"\\Places\\"+str(place)+"\\Reserved\\"+number_place+"\\log","a")
+		file.write(str(user)+"\n")
+		file.close()
+
+		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\log","a",encoding="utf8")
+		file.write(place + ": "+floor + " этаж " + number_place + " место\n")
+		file.close()
+
+		shutil.move(os.getcwd()+"\\Places\\"+str(place)+"\\Reserved\\"+number_place,os.getcwd()+"\\Places\\"+str(place)+"\\Free\\"+number_place)
+
+		os.remove(os.getcwd()+"\\Users\\"+str(user)+"\\reserved")
+
+
+
+		text = "Отлично! Теперь вы можете заехать на свое место. Хорошего вам дня :)"
+
+		bot.sendMessage(user, text, parse_mode=telegram.ParseMode.HTML)
+
+
+		text = "Выберите действие"
+		if os.path.exists(os.getcwd()+"\\Users\\"+str(user)+"\\reserved"):
+			reply_keyboard = [['Мои места'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+		else:
+			reply_keyboard = [['Бронирование'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+		
+		bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
+
+		return NONE
+
+	if "Отменить" in received_text:
+
+		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\reserved","r")
+		data = file.readlines()
+		file.close()
+
+		place = data[0].replace("\n","")
+		floor = data[1].replace("\n","")
+		number_place = data[2].replace("\n","")
+
+		shutil.move(os.getcwd()+"\\Places\\"+str(place)+"\\Reserved\\"+number_place,os.getcwd()+"\\Places\\"+str(place)+"\\Free\\"+number_place)
+
+		os.remove(os.getcwd()+"\\Users\\"+str(user)+"\\reserved")
+
+		text = "Бронирование снято"
+
+		bot.sendMessage(user, text, parse_mode=telegram.ParseMode.HTML)
+
+		text = "Выберите действие"
+		if os.path.exists(os.getcwd()+"\\Users\\"+str(user)+"\\reserved"):
+			reply_keyboard = [['Мои места'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+		else:
+			reply_keyboard = [['Бронирование'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+		
+		bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
+
+		return NONE
+		
+
+
+
+	if "Назад" in received_text:
+
+		text = "Выберите действие"
+		if os.path.exists(os.getcwd()+"\\Users\\"+str(user)+"\\reserved"):
+			reply_keyboard = [['Мои места'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+		else:
+			reply_keyboard = [['Бронирование'],['Мои машины']]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+		
+		bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
+
+		return NONE
+
 
 
 	if "Добавить машину" in received_text:
@@ -378,14 +606,48 @@ def text_handler(bot, update):
 	if "Мои машины" in received_text:
 
 		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\description", "r", encoding="utf8")
+		Cars = file.read()
+		file.close()
+		if len(Cars)!=0:
+			text = "<b>Ваши машины</b>\n\n"+Cars
+
+			reply_keyboard = [['Добавить','Удалить'],["Назад"]]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+			bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
+
+			return NONE
+		else:
+			text = "<b>Вами не добавлена ни одна машина</b>"
+
+			reply_keyboard = [['Добавить'],["Назад"]]
+			markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+			bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
+
+			return NONE
+
+
+	if "Удалить" in received_text:
+		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\description", "r", encoding="utf8")
 		Cars = file.readlines()
 		file.close()
 
-		text = "Ваши машины"
+		text = "Выберите машину, которую хотите <b>удалить</b>"
 
-		bot.sendMessage(user, text, reply_markup=CreateInlineKeyboard(Cars),resize_keyboard=True, one_time_keyboard=True)
+		bot.sendMessage(user, text, reply_markup=CreateInlineKeyboardCars(Cars), parse_mode=telegram.ParseMode.HTML)
 
 		return NONE
+
+
+
+	if "Добавить" in received_text:
+		text = "Отправьте номер машины вида\n<b>01 A000AA</b>"
+
+		file = open(os.getcwd()+"\\Users\\"+str(user)+"\\add_car_number","w")
+		file.close()
+
+		bot.sendMessage(user, text, parse_mode=telegram.ParseMode.HTML)
 
 	return NONE
 
@@ -414,8 +676,14 @@ def contact_handler(bot, update):
 
 				text = "Выберите действие"
 
-				reply_keyboard = [['Бронирование'],['Мои машины']]
-				markup = ReplyKeyboardMarkup(reply_keyboard, resize_keyboard=True, one_time_keyboard=True)
+				if os.path.exists(os.getcwd()+"\\Users\\"+str(user)+"\\reserved"):
+					reply_keyboard = [['Мои места'],['Мои машины']]
+					markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
+				else:
+					reply_keyboard = [['Бронирование'],['Мои машины']]
+					markup = ReplyKeyboardMarkup(reply_keyboard,resize_keyboard=True, one_time_keyboard=True)
+
 
 				
 				bot.sendMessage(user, text, reply_markup=markup, parse_mode=telegram.ParseMode.HTML)
