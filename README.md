@@ -1,1 +1,3 @@
-need to download PyCharm...
+Some projects on Python
+
+Test Project - Example work for remote HQ
